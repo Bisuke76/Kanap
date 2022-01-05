@@ -2,8 +2,6 @@ var str = window.location.href;
 var url = new URL(str);
 var id = url.searchParams.get("id");
 
-console.log(id);
-
 const color = document.querySelector("#colors");
 const quantity = document.querySelector("#quantity");
 
@@ -43,7 +41,6 @@ function printProductCard() {
     productDescription.innerHTML = product.description;
 
     for (let colors of product.colors) {
-        console.log(colors);
         let productColors = document.createElement("option");
         document.querySelector("#colors").appendChild(productColors);
         productColors.value = colors;

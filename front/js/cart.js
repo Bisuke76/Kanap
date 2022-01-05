@@ -3,7 +3,7 @@ let productOnLocalStorage = JSON.parse(localStorage.getItem("products"));
 
 const textEmptyCart = document.querySelector("#cart__items");
 
-// Si le panier est vide
+//Fonction Afficher les produits dans le panier
 function getCart() {
     if (localStorage.getItem("products")) {
         if (productOnLocalStorage.length > 0) {
@@ -56,18 +56,18 @@ function changeQuantity() {
         const id = itemCloset.dataset.id;
         const colorItem = itemCloset.dataset.color;
 
-        console.log(id);
-        console.log(colorItem);
+
+
 
         item.addEventListener('change', e => {
             e.preventDefault();
             newQuantity = Number(item.value);
-            console.log("new" + newQuantity);
+
 
             productOnLocalStorage.forEach(product => {
                 if (product.id === id && product.color === colorItem) {
 
-                    console.log("ok if");
+
 
                     product.quantityProduct = newQuantity
 
@@ -126,23 +126,44 @@ function cartPriceTotal() {
 
 cartPriceTotal();
 
-// Fonction Ajout de quantité 
-
+// Fonction modification de quantité 
 function cartQuantityTotal() {
 
-    let quantityTotal = 0;
-
-    productOnLocalStorage.forEach(product => {
-        quantityTotal = quantityTotal + (Number(product.quantityProduct++))
-    })
-
-    const printQuantityTotal = document.getElementById("totalQuantity");
-    const printQuantityHTMLTotal = `${quantityTotal}`;
-    printQuantityTotal.innerHTML = printQuantityHTMLTotal;
+    const storage = localStorage.getItem('products');
+    if (storage) {
+        const product = JSON.parse(storage);
+        const total = product.reduce(
+            (acc, el) => acc + Number(el.quantityProduct), 0)
+        document.querySelector("#totalQuantity").innerHTML = total;
+    }
 
 }
 
 cartQuantityTotal();
+
+// Fonction affichage dynamique quantité et prix total 
+let input = document.querySelector('#cart__items')
+
+input.addEventListener('input', (event) => {
+    const id = event.target.getAttribute("id");
+    const color = event.target.closest(".cart__item").getAttribute('data-color');
+    const newQuantity = event.target.value;
+
+
+    for (let i = 0; i < productOnLocalStorage.length; i++) {
+
+        if (productOnLocalStorage[i].id === id && productOnLocalStorage[i].color === color) {
+
+
+            productOnLocalStorage[i].quantityProduct = newQuantity
+            localStorage.setItem('products', JSON.stringify(productOnLocalStorage))
+            cartQuantityTotal();
+            cartPriceTotal();
+
+        }
+    }
+})
+
 
 // Contact Fonction et ecoute change Regex
 const firstName = document.getElementById("firstName");
@@ -270,9 +291,6 @@ function validAndSubmitForm() {
                     alert("Problème avec fetch : " + err.message);
                 });
 
-        } else {
-
-            alert("Veuillez saisir correctement tout les champs !")
         }
 
     });
